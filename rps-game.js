@@ -4,7 +4,7 @@ function computerPlay(){
 }
 
 function playRps(playerSelection, computerSelection){
-    computerSelection = computerSelection.toLowerCase();
+    playerSelection = playerSelection.toLowerCase();
     switch(playerSelection){
         case "rock":
             switch(computerSelection){
@@ -38,26 +38,32 @@ function playRps(playerSelection, computerSelection){
 
 function game(){
     let winCount = 0;
-    for (let i = 0; i < 5; i++) {
-        input = prompt("Choose rock, paper or scissors!", "rock");
-        res = playRps(input, computerPlay());
-        alert(res);
-        if (res.includes("Win")){
-            winCount += 2;
+    let loseCount = 0;
+    const buttons = document.querySelectorAll('button');
+    const div = document.querySelector('div');
+
+    function bestOfFive(){
+        let res = playRps(this.textContent, computerPlay());
+        if (res.includes('W')){
+            winCount += 1;
         }
-        else if (res == "Draw!"){
-            winCount +=1;
+        else if (res.includes('L')){
+            loseCount += 1;
         }
-     }
-     if (winCount < 5){
-         alert("You Lose the game :(");
-     }
-     else if (winCount == 5){
-         alert("It's a Draw!");
-     }
-     else{
-         alert("Congratulations! You win :)");
-     }
+        div.textContent = res.concat(` You: ${winCount}, Computer: ${loseCount}`);
+        if (winCount == 5){
+            div.textContent = "Congratulations! You win :)";
+            buttons.forEach(btn => btn.removeEventListener('click', bestOfFive));
+            return;
+        }
+        else if (loseCount == 5){
+            div.textContent = "You Lose the game :(";
+            buttons.forEach(btn => btn.removeEventListener('click', bestOfFive));
+            return;
+        }
+    }
+
+    buttons.forEach(btn => btn.addEventListener('click', bestOfFive));
 }
 
 game();
